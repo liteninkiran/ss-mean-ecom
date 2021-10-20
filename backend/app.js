@@ -3,11 +3,15 @@ const app = express();
 const morgan = require('morgan');
 const productsRouter = require('./routers/products');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 require('dotenv/config');
 
 const api = process.env.API_URL;
 const conString = process.env.CONN_STRING;
+
+app.use(cors());
+app.options('*', cors());
 
 // Middleware
 app.use(express.json());
