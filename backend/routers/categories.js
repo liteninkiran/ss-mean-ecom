@@ -17,14 +17,13 @@ router.post('/', (req, res) => {
         color: req.body.color,
     });
 
-    category.save().then((newCategory) => {
-        res.status(201).json(newCategory);
-    }).catch((err) => {
-        res.status(500).json({
-            success: false,
-            error: err,
-        });
-    });
+    category = await category.save();
+
+    if (!category) {
+        return res.status(404).send('Category cannot be created');
+    }
+
+    res.send(category);
 });
 
 module.exports = router;
