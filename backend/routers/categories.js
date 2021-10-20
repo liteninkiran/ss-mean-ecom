@@ -11,19 +11,25 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const category = new Category({
+    let category = new Category({
         name: req.body.name,
         icon: req.body.icon,
         color: req.body.color,
     });
 
-    category = await category.save();
-
-    if (!category) {
-        return res.status(404).send('Category cannot be created');
-    }
-
-    res.send(category);
+    await category.save(function(err) {
+        if (err) {
+          if (err.code === 11000) {
+            // Duplicate name
+            return res.status(422).send({ succes: false, message: `Category '${category.name}' already exists` });
+          }
+    
+          // Some other error
+          return res.status(422).send(err);
+        }
+    
+        res.send(category);
+    });
 });
 
 module.exports = router;
