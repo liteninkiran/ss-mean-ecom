@@ -32,4 +32,16 @@ router.post('/', async (req, res) => {
     });
 });
 
+router.delete('/:id', async (req, res) => {
+    Category.findByIdAndRemove(req.params.id).then(category => {
+        if (category) {
+            return res.status(200).json({ success: true, message: 'Category deleted successfully' });
+        } else {
+            return res.status(404).json({ success: false, message: 'Could not find category' });
+        }
+    }).catch(err => {
+        return res.status(400).json({ success: false, err: err });
+    });
+});
+
 module.exports = router;
