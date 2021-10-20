@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     res.send(categories);
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const category = new Category({
         name: req.body.name,
         icon: req.body.icon,
