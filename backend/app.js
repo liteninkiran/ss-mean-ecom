@@ -12,21 +12,51 @@ const conString = process.env.CONN_STRING;
 app.use(express.json());
 app.use(morgan('tiny'));
 
-app.get(`${api}/products`, (req, res) => {
-    const product = {
-        id: 1,
-        name: 'Hair Dresser',
-        image: 'image_url',
-    };
-    res.send(product);
+const productSchema = mongoose.Schema({
+    name: String,
+    image: String,
+    countInStock: {
+        type: Number,
+        required: true,
+    },
+});
+
+const Product = mongoose.model('Product', productSchema);
+
+app.get(`${api}/products`, async (req, res) => {
+    const products = await Product.find();
+    if (!products) {
+        res.status(500).json({ success: false });
+    }
+    res.send(products);
 });
 
 app.post(`${api}/products`, (req, res) => {
-    const newProduct = req.body;
-    res.json(newProduct);
+    const product = new Product({
+        name: req.body.name,
+        image: req.body.image,
+        countInStock: req.body.countInStock,
+    });
+
+    product.save().then((newProduct) => {
+        res.status(201).json(newProduct);
+    }).catch((err) => {
+        res.status(500).json({
+            success: false,
+            error: err,
+        });
+    });
 });
 
-mongoose.connect(conString);
+mongoose.connect(conString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: 'mean-eshop',
+}).then(() => {
+    console.log('DB connection ready');
+}).catch((err) => {
+    console.log(err);
+});
 
 app.listen(3000, () => {
     console.log('Server running on port 3000');
