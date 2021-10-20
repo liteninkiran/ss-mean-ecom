@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const productsRouter = require('./routers/products');
+const categoriesRouter = require('./routers/categories');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
@@ -17,6 +18,7 @@ app.options('*', cors());
 app.use(express.json());
 app.use(morgan('tiny'));
 app.use(`${api}/products`, productsRouter);
+app.use(`${api}/categories`, categoriesRouter);
 
 mongoose.connect(conString, {
     useNewUrlParser: true,
