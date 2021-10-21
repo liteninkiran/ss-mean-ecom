@@ -1,0 +1,89 @@
+
+{
+    "name": "Furniture",
+    "icon": "furniture",
+    "color": "blue"
+}
+
+{
+    "name": "Clothes",
+    "icon": "clothes",
+    "color": "red"
+}
+
+{
+    "name": "Jewellery",
+    "icon": "jewellery",
+    "color": "white"
+}
+
+{
+    "name": "Sports",
+    "icon": "sports",
+    "color": "green"
+}
+
+{
+    "name": "Cricket Bat",
+    "description": "Cricket Bat",
+    "richDescription": "Cricket Bat",
+    "image": "image_of_cricket_bat",
+    "images": ["image_1", "image_2", "etc"],
+    "brand": "Bellingham & Smith",
+    "price": 100,
+    "category": "6171e4c7813257cef2df9911",
+    "countInStock": 12,
+    "rating": 3,
+    "numReviews": 3,
+    "isFeatured": true
+}
+
+
+{
+    "name": "Football",
+    "description": "Football",
+    "richDescription": "Football - Size 11",
+    "image": "image_of_football",
+    "images": ["image_1", "image_2", "etc"],
+    "brand": "Addidas",
+    "price": 15,
+    "category": "6171e4c7813257cef2df9911",
+    "countInStock": 30,
+    "rating": 4,
+    "numReviews": 7,
+    "isFeatured": false
+}
+
+
+{
+    "name": "Men Trousers",
+    "description": "Denim Trousers - Mens",
+    "richDescription": "Denim trousers - Mens - 42 inch waist - 40 inch leg",
+    "image": "image_of_jeans",
+    "images": ["image_1", "image_2", "etc"],
+    "brand": "Lee",
+    "price": 50,
+    "category": "6171e4d7813257cef2df9917",
+    "countInStock": 10,
+    "rating": 4,
+    "numReviews": 5,
+    "isFeatured": false
+}
+
+
+{
+    "name": "Cocktail Dress",
+    "description": "Cocktail Dress",
+    "richDescription": "Cocktail Dress",
+    "image": "image_of_dress",
+    "images": ["image_1", "image_2", "etc"],
+    "brand": "Ralph Lauren",
+    "price": 1000,
+    "category": "6171e4d7813257cef2df9917",
+    "countInStock": 1,
+    "rating": 5,
+    "numReviews": 1,
+    "isFeatured": true
+}
+
+

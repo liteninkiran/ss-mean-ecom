@@ -5,7 +5,12 @@ const { Category } = require('../models/category');
 const mongoose = require('mongoose');
 
 router.get('/', async (req, res) => {
-    const products = await Product.find().populate('category'); // .select('name image category -_id');
+    let filter = {};
+    if (req.query.categories) {
+        // Example URL: http://localhost:3000/api/v1/products?categories=XXX,YYY,ZZZ
+        filter = { category: req.query.categories.split(',') };
+    }
+    const products = await Product.find(filter).populate('category'); // .select('name image category -_id');
     if (!products) {
         res.status(500).json({ success: false });
     }
