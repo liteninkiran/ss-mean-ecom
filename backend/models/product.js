@@ -20,6 +20,10 @@ const productSchema = mongoose.Schema({
     images: [{
         type: String,
     }],
+    brand: {
+        type: String,
+        default: '',
+    },
     price: {
         type: Number,
         default: 0,
@@ -36,6 +40,10 @@ const productSchema = mongoose.Schema({
         max: 255,
     },
     rating: {
+        type: Number,
+        default: 0,
+    },
+    numReviews: {
         type: Number,
         default: 0,
     },
