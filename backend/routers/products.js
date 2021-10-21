@@ -4,7 +4,7 @@ const { Product } = require('../models/product');
 const { Category } = require('../models/category');
 
 router.get('/', async (req, res) => {
-    const products = await Product.find(); // .select('name image -_id');
+    const products = await Product.find().populate('category').select('name image category -_id');
     if (!products) {
         res.status(500).json({ success: false });
     }
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate('category');
     if (!product) {
         res.status(500).json({ success: false, message: 'Product not found' });
     }
@@ -77,6 +77,18 @@ router.post('/', async (req, res) => {
     }
 
     res.send(product);
+});
+
+router.delete('/:id', async (req, res) => {
+    Product.findByIdAndRemove(req.params.id).then(product => {
+        if (product) {
+            return res.status(200).json({ success: true, message: 'Product deleted successfully' });
+        } else {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+    }).catch(err => {
+        return res.status(400).json({ success: false, err: err });
+    });
 });
 
 module.exports = router;
