@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Product } = require('../models/product');
 const { Category } = require('../models/category');
+const mongoose = require('mongoose');
 
 router.get('/', async (req, res) => {
     const products = await Product.find().populate('category').select('name image category -_id');
@@ -20,6 +21,9 @@ router.get('/:id', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).send('Invalid product');
+    }
     const category = await Category.findById(req.body.category);
 
     if (!category) {
@@ -89,6 +93,14 @@ router.delete('/:id', async (req, res) => {
     }).catch(err => {
         return res.status(400).json({ success: false, err: err });
     });
+});
+
+router.get('/get/count', async (req, res) => {
+    const productCount = await Product.countDocuments();
+    if (!productCount) {
+        res.status(500).json({ success: false });
+    }
+    res.send({ productCount: productCount });
 });
 
 module.exports = router;
