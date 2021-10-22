@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { User } = require('../models/user');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 router.get('/', async (req, res) => {
-    const users = await User.find();
+    const users = await User.find().select('-passwordHash');
     if (!users) {
         res.status(500).json({ success: false });
     }
@@ -11,7 +13,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).select('-passwordHash');
     if (!user) {
         res.status(500).json({ success: false, message: 'User not found' });
     }
@@ -22,7 +24,7 @@ router.put('/:id', async (req, res) => {
     const user = await User.findByIdAndUpdate(req.params.id, {
         name: req.body.name,
         email: req.body.email,
-        passwordHash: req.body.password,
+        // passwordHash: bcrypt.hashSync(req.body.password, 5),
         phone: req.body.phone,
         isAdmin: req.body.isAdmin,
         street: req.body.street,
@@ -43,7 +45,7 @@ router.post('/', async (req, res) => {
     let user = new User({
         name: req.body.name,
         email: req.body.email,
-        passwordHash: req.body.password,
+        passwordHash: bcrypt.hashSync(req.body.password, 5),
         phone: req.body.phone,
         isAdmin: req.body.isAdmin,
         street: req.body.street,
@@ -78,6 +80,23 @@ router.delete('/:id', async (req, res) => {
     }).catch(err => {
         return res.status(400).json({ success: false, err: err });
     });
+});
+
+router.post('/login', async (req, res) => {
+    const user = await User.findOne({ email: req.body.email });
+    const secret = process.env.JWT_SECRET;
+    const invalidCreds = 'Invalid credentials';
+
+    if (!user) {
+        return res.status(400).send(invalidCreds);
+    }
+
+    if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
+        const token = jwt.sign({ userId: user.id }, secret, { expiresIn: '1d' });
+        return res.status(200).send({ user: user.email, token: token });
+    } else {
+        return res.status(200).send(invalidCreds);
+    }
 });
 
 module.exports = router;
