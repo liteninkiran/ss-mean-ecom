@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const productsRoutes = require('./routes/products');
 const categoriesRoutes = require('./routes/categories');
 const usersRoutes = require('./routes/users');
+const ordersRoutes = require('./routes/orders');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const authJwt = require('./helpers/jwt');
@@ -27,6 +28,7 @@ app.use(errorHandler);
 app.use(`${api}/products`, productsRoutes);
 app.use(`${api}/categories`, categoriesRoutes);
 app.use(`${api}/users`, usersRoutes);
+app.use(`${api}/orders`, ordersRoutes);
 
 mongoose.connect(conString, {
     useNewUrlParser: true,
