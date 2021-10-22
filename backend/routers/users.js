@@ -24,7 +24,7 @@ router.put('/:id', async (req, res) => {
     const user = await User.findByIdAndUpdate(req.params.id, {
         name: req.body.name,
         email: req.body.email,
-        // passwordHash: bcrypt.hashSync(req.body.password, 5),
+        // passwordHash: bcrypt.hashSync(req.body.password, 10),
         phone: req.body.phone,
         isAdmin: req.body.isAdmin,
         street: req.body.street,
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
     let user = new User({
         name: req.body.name,
         email: req.body.email,
-        passwordHash: bcrypt.hashSync(req.body.password, 5),
+        passwordHash: bcrypt.hashSync(req.body.password, 10),
         phone: req.body.phone,
         isAdmin: req.body.isAdmin,
         street: req.body.street,
@@ -97,6 +97,35 @@ router.post('/login', async (req, res) => {
     } else {
         return res.status(200).send(invalidCreds);
     }
+});
+
+router.post('/register', async (req, res) => {
+    let user = new User({
+        name: req.body.name,
+        email: req.body.email,
+        passwordHash: bcrypt.hashSync(req.body.password, 10),
+        phone: req.body.phone,
+        street: req.body.street,
+        apartment: req.body.apartment,
+        zip: req.body.zip,
+        city: req.body.city,
+        country: req.body.country,
+    });
+
+    await user.save(function(err) {
+        if (err) {
+          if (err.code === 11000) {
+            // Duplicate email
+            return res.status(422).send({ succes: false, message: `User with email '${user.email}' already exists` });
+          }
+    
+          // Some other error
+          return res.status(422).send(err);
+        }
+
+        user.passwordHash = undefined;
+        res.send(user);
+    });
 });
 
 module.exports = router;
