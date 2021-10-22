@@ -6,6 +6,7 @@ const categoriesRouter = require('./routers/categories');
 const usersRouter = require('./routers/users');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const authJwt = require('./helpers/jwt');
 
 require('dotenv/config');
 
@@ -18,6 +19,9 @@ app.options('*', cors());
 // Middleware
 app.use(express.json());
 app.use(morgan('tiny'));
+app.use(authJwt());
+
+// Routes
 app.use(`${api}/products`, productsRouter);
 app.use(`${api}/categories`, categoriesRouter);
 app.use(`${api}/users`, usersRouter);
