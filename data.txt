@@ -86,4 +86,19 @@
     "isFeatured": true
 }
 
+{
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "needs_hashing",
+    "phone": "0504 987 2145",
+    "isAdmin": false,
+    "street": "1 The Street",
+    "apartment": "504 Hanover Buildings",
+    "zip": "PA 09 90",
+    "city": "Hamalan",
+    "country": "Uzbekistan"
+}
+
+
+
 
