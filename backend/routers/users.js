@@ -92,7 +92,7 @@ router.post('/login', async (req, res) => {
     }
 
     if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
-        const token = jwt.sign({ userId: user.id }, secret, { expiresIn: '1d' });
+        const token = jwt.sign({ userId: user.id, idAdmin: user.isAdmin }, secret, { expiresIn: '1d' });
         return res.status(200).send({ user: user.email, token: token });
     } else {
         return res.status(200).send(invalidCreds);
