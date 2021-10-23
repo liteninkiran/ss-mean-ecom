@@ -4,7 +4,7 @@ const orderSchema = mongoose.Schema({
     orderItems: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'OrderItem',
-        required:true
+        required: true
     }],
     shippingAddress1: {
         type: String,

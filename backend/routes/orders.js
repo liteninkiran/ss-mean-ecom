@@ -109,7 +109,7 @@ router.delete('/:id', (req, res) => {
             })
             return res.status(200).json({success: true, message: 'Order deleted successfully'});
         } else {
-            return res.status(404).json({success: false , message: "Order not found"});
+            return res.status(404).json({success: false , message: 'Order not found'});
         }
     }).catch(err => {
        return res.status(500).json({ success: false, error: err });
