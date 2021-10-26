@@ -29,6 +29,7 @@ const storage = multer.diskStorage({
 
 const uploadOptions = multer({ storage: storage });
 
+// Read many
 router.get('/', async (req, res) => {
     let filter = {};
     if (req.query.categories) {
@@ -42,6 +43,7 @@ router.get('/', async (req, res) => {
     res.send(products);
 });
 
+// Read one
 router.get('/:id', async (req, res) => {
     const product = await Product.findById(req.params.id).populate('category');
     if (!product) {
@@ -50,21 +52,40 @@ router.get('/:id', async (req, res) => {
     res.send(product);
 });
 
+// Update
 router.put('/:id', async (req, res) => {
+
+    // Check the ID that is passed in
     if (!mongoose.isValidObjectId(req.params.id)) {
         return res.status(400).send('Invalid product');
     }
-    const category = await Category.findById(req.body.category);
 
-    if (!category) {
-        return res.status(400).send('Invalid category');
+    // Check if category is valid
+    const category = await Category.findById(req.body.category);
+    if (!category) return res.status(400).send('Invalid category');
+
+    // Check if product is valid
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(400).send('Invalid product');
+
+    const file = req.file;
+    let filePath;
+
+    if (file) {
+        // Create file path
+        const fileName = req.file.filename;
+        const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+        filePath = `${basePath}${fileName}`;
+    } else {
+        filePath = product.image;
     }
 
-    const product = await Product.findByIdAndUpdate(req.params.id, {
+    // Update the record
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, {
         name: req.body.name,
         description: req.body.description,
         richDescription: req.body.richDescription,
-        image: req.body.image,
+        image: filePath,
         images: req.body.images,
         brand: req.body.brand,
         price: req.body.price,
@@ -76,27 +97,41 @@ router.put('/:id', async (req, res) => {
     }, {
         new: true,
     });
-    if (!product) {
-        res.status(500).json({ success: false, message: 'Product not found' });
+
+    if (!updatedProduct) {
+        res.status(500).json({ success: false, message: 'Could not save record' });
     }
-    res.send(product);
+
+    res.send(updatedProduct);
 });
 
+// Create
 router.post('/', uploadOptions.single('image'), async (req, res) => {
+
+    // Store category
     const category = await Category.findById(req.body.category);
 
+    // Check category is valid
     if (!category) {
         return res.status(400).send('Invalid category');
     }
 
+    // Check file has been uploaded
+    const file = req.file;
+    if (!file) {
+        return res.status(400).send('No image in the request');
+    }
+
+    // Create file path
     const fileName = req.file.filename;
     const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+    const filePath = `${basePath}${fileName}`;
 
     let product = new Product({
         name: req.body.name,
         description: req.body.description,
         richDescription: req.body.richDescription,
-        image: `${basePath}${fileName}`,
+        image: filePath,
         images: req.body.images,
         brand: req.body.brand,
         price: req.body.price,
@@ -116,6 +151,7 @@ router.post('/', uploadOptions.single('image'), async (req, res) => {
     res.send(product);
 });
 
+// Delete
 router.delete('/:id', async (req, res) => {
     Product.findByIdAndRemove(req.params.id).then(product => {
         if (product) {
@@ -128,6 +164,7 @@ router.delete('/:id', async (req, res) => {
     });
 });
 
+// Read - counts
 router.get('/get/count', async (req, res) => {
     const productCount = await Product.countDocuments();
     if (!productCount) {
@@ -136,6 +173,7 @@ router.get('/get/count', async (req, res) => {
     res.send({ productCount: productCount });
 });
 
+// Read - featured counts
 router.get('/get/featured/:count?', async (req, res) => {
     const count = req.params.count ? Number(req.params.count) : 0;
     const products = await Product.find({ isFeatured: true }).limit(count);
