@@ -86,7 +86,6 @@ router.put('/:id', async (req, res) => {
         description: req.body.description,
         richDescription: req.body.richDescription,
         image: filePath,
-        images: req.body.images,
         brand: req.body.brand,
         price: req.body.price,
         category: category.id,
@@ -99,7 +98,7 @@ router.put('/:id', async (req, res) => {
     });
 
     if (!updatedProduct) {
-        res.status(500).json({ success: false, message: 'Could not save record' });
+        return res.status(500).json({ success: false, message: 'Cannot update product' });
     }
 
     res.send(updatedProduct);
@@ -132,7 +131,6 @@ router.post('/', uploadOptions.single('image'), async (req, res) => {
         description: req.body.description,
         richDescription: req.body.richDescription,
         image: filePath,
-        images: req.body.images,
         brand: req.body.brand,
         price: req.body.price,
         category: category.id,
@@ -145,7 +143,7 @@ router.post('/', uploadOptions.single('image'), async (req, res) => {
     product = await product.save();
 
     if (!product) {
-        return res.status(500).send('The product cannot be created');
+        return res.status(500).send('Cannot create product');
     }
 
     res.send(product);
@@ -181,6 +179,40 @@ router.get('/get/featured/:count?', async (req, res) => {
         res.status(500).json({ success: false });
     }
     res.send({ products: products });
+});
+
+// Update
+router.put('/gallery-images/:id', uploadOptions.array('images', 10), async (req, res) => {
+
+    // Check the ID that is passed in
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).send('Invalid product');
+    }
+
+    const files = req.files;
+    const imagesPaths = [];
+    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+
+    if (files) {
+        files.map(file => {
+            console.log(file);
+            imagesPaths.push(`${basePath}${file.filename}`);
+        });
+    }
+
+    // Update the record
+    const product = await Product.findByIdAndUpdate(req.params.id, {
+        images: imagesPaths,
+    }, {
+        new: true,
+    });
+
+    if (!product) {
+        return res.status(500).json({ success: false, message: 'Cannot update product' });
+    }
+
+    res.send(product);
+
 });
 
 module.exports = router;
